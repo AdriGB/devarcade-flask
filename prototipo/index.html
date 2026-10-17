@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DevArcade — Portfolio Fullstack</title>
+  <link href="/vendor/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="theme.css" rel="stylesheet">
+  <link href="arcade.css" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ============ NAVBAR ============ -->
+  <nav class="navbar navbar-expand-lg sticky-top arc-nav py-2">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+        <span class="ficha">D</span>
+        <span class="brand">DEV<span class="neon-pink">ARCADE</span></span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="nav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
+          <li class="nav-item"><a class="nav-link" href="#sobre-mi">Sobre mí</a></li>
+          <li class="nav-item"><a class="nav-link" href="#servicios">Servicios</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+          <li class="nav-item"><a class="nav-link" href="login.html">Iniciar sesión</a></li>
+          <li class="nav-item">
+            <a class="btn-arcade btn-arcade--pink" href="arcade.html">🕹 Entrar al arcade</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============ HERO ============ -->
+  <header class="position-relative pt-5 pb-5 overflow-hidden">
+    <div class="grid-floor position-absolute top-0 start-0 w-100 h-100" aria-hidden="true"></div>
+    <div class="container position-relative">
+      <div class="row align-items-center g-5 py-lg-5">
+        <!-- Columna texto (asimétrica: 7/5) -->
+        <div class="col-lg-7">
+          <p class="section-label mb-3">Portfolio Fullstack · 2026</p>
+          <h1 class="display-arc marquee-sign neon-pink flicker mb-4">
+            HOLA, SOY<br>LUCA FERRARI
+          </h1>
+          <p class="lead text-muted-arc col-lg-10">
+            Desarrollador Fullstack. Construyo aplicaciones web de punta a punta:
+            interfaces que se sienten bien, APIs que responden y bases de datos que
+            no se caen. <strong class="text-white">Este portfolio es una sala arcade</strong> —
+            cada máquina es un proyecto y cada pantalla, una demo que podés jugar.
+          </p>
+          <div class="d-flex flex-wrap gap-3 mt-4">
+            <a class="btn-arcade btn-arcade--coin" href="arcade.html">▶ Insert coin — jugar</a>
+            <a class="btn-arcade btn-arcade--cyan" href="#contacto">Cotizar un proyecto</a>
+          </div>
+          <p class="small text-muted-arc mt-4 mb-0">
+            🔒 Las demos requieren cuenta gratuita · ⚡ Respuesta a consultas en 24 h
+          </p>
+        </div>
+
+        <!-- Columna gabinete destacado -->
+        <div class="col-lg-5">
+          <div class="cabinet cabinet--on">
+            <div class="cabinet__marquee neon-cyan">DEV ARCADE</div>
+            <div class="cabinet__screen scanlines">
+              <div class="screen-art">
+                <div class="invaders">
+                  <i></i><i></i><i></i><i></i><i></i><i></i>
+                </div>
+              </div>
+            </div>
+            <div class="cabinet__deck">
+              <span class="arcade-key arcade-key--pink" aria-hidden="true"></span>
+              <span class="arcade-key arcade-key--cyan" aria-hidden="true"></span>
+              <div class="ms-auto d-flex align-items-center gap-2">
+                <span class="coin-slot" aria-hidden="true"></span>
+                <span class="font-display small text-muted-arc">1 CREDIT</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ TICKER (modo attract) ============ -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker__track">
+      <span><b>HTML5</b> CSS3 JAVASCRIPT</span>
+      <span><b>NODE.JS</b> EXPRESS</span>
+      <span><b>SQL</b> POSTGRESQL</span>
+      <span><b>TAILWIND</b> BOOTSTRAP</span>
+      <span><b>REACT</b> VITE</span>
+      <span><b>GSAP</b> CHART.JS</span>
+      <span><b>GIT</b> GITHUB</span>
+      <!-- duplicado para loop continuo -->
+      <span><b>HTML5</b> CSS3 JAVASCRIPT</span>
+      <span><b>NODE.JS</b> EXPRESS</span>
+      <span><b>SQL</b> POSTGRESQL</span>
+      <span><b>TAILWIND</b> BOOTSTRAP</span>
+      <span><b>REACT</b> VITE</span>
+      <span><b>GSAP</b> CHART.JS</span>
+      <span><b>GIT</b> GITHUB</span>
+    </div>
+  </div>
+
+  <!-- ============ SOBRE MÍ + STACK ============ -->
+  <section id="sobre-mi" class="container py-5">
+    <div class="row g-5 align-items-start">
+      <div class="col-lg-5">
+        <!-- Placeholder de foto: reemplazar por imagen real -->
+        <div class="surface d-grid place-items-center p-5 text-center" style="aspect-ratio: 4/5;">
+          <div>
+            <div class="ficha mx-auto mb-3" style="width:72px;height:72px;font-size:1.4rem;">L</div>
+            <p class="font-display small text-muted-arc m-0">FOTO / AVATAR</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <p class="section-label mb-2">Sobre mí</p>
+        <h2 class="h-arc mb-3">De jugador a desarrollador</h2>
+        <p class="text-muted-arc">
+          Empecé desarmando los juegos que jugaba. Hoy diseño y desarrollo aplicaciones
+          web completas: desde el wireframe hasta el deploy. Me interesa el código que se
+          entiende, las interfaces que se sienten rápidas y los productos que resuelven
+          problemas reales.
+        </p>
+        <h3 class="h6 mt-4 mb-3 text-uppercase text-muted-arc" style="letter-spacing:.12em;">Stack tecnológico</h3>
+        <div class="d-flex flex-wrap gap-2">
+          <span class="tech-chip"><span class="dot"></span>JavaScript</span>
+          <span class="tech-chip"><span class="dot"></span>Python</span>
+          <span class="tech-chip"><span class="dot"></span>Flask</span>
+          <span class="tech-chip"><span class="dot"></span>SQLite</span>
+          <span class="tech-chip"><span class="dot"></span>Bootstrap</span>
+          <span class="tech-chip"><span class="dot"></span>HTML5</span>
+          <span class="tech-chip"><span class="dot"></span>Git / GitHub</span>
+          <span class="tech-chip"><span class="dot"></span>Figma</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SERVICIOS (filas numeradas) ============ -->
+  <section id="servicios" class="container py-5">
+    <p class="section-label mb-2">Servicios</p>
+    <h2 class="h-arc mb-4">Qué puedo construir para vos</h2><div id="lista-servicios" aria-live="polite">Cargando servicios…</div></section>
+
+  <!-- ============ CTA ARCADE ============ -->
+  <section class="container py-5">
+    <div class="surface p-4 p-lg-5 position-relative overflow-hidden">
+      <div class="grid-floor position-absolute top-0 start-0 w-100 h-100" aria-hidden="true"></div>
+      <div class="row align-items-center g-4 position-relative">
+        <div class="col-lg-8">
+          <p class="section-label mb-2">Zona de juego</p>
+          <h2 class="display-arc neon-cyan mb-3">SALA ARCADE ABIERTA</h2>
+          <p class="text-muted-arc mb-0 col-lg-9">
+            Tres juegos para explorar lo que podemos construir. Miralas desde fuera
+            — o creá una cuenta gratuita y encendé las pantallas.
+          </p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          <a class="btn-arcade btn-arcade--coin" href="arcade.html">🕹 Entrar al arcade</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACTO ============ -->
+  <section id="contacto" class="container py-5">
+    <div class="row g-5">
+      <div class="col-lg-5">
+        <p class="section-label mb-2">Contacto</p>
+        <h2 class="h-arc mb-3">Hablemos de tu proyecto</h2>
+        <p class="text-muted-arc">
+          Contame qué necesitás y te respondo con una propuesta y un presupuesto estimativo.
+          También podés escribirme para asesoría técnica.
+        </p>
+        <ul class="list-unstyled mt-4 text-muted-arc">
+          <li class="mb-2">📧 hola@devarcade.dev</li>
+          <li class="mb-2">⏱ Respuesta en 24 h hábiles</li>
+          <li>🌎 Trabajo remoto · GMT-3</li>
+        </ul>
+      </div>
+
+      <div class="col-lg-7">
+        <form id="form-contacto" class="surface p-4 p-lg-4 needs-validation">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="nombre">Nombre *</label>
+              <input class="form-control" id="nombre" type="text" placeholder="Tu nombre" required>
+              <div class="invalid-feedback">Ingresá tu nombre (mínimo 2 caracteres).</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="email">Email *</label>
+              <!-- Estado inválido de ejemplo (validación en vivo) -->
+              <input class="form-control" id="email" type="email" placeholder="nombre@dominio.com" required>
+              <div class="invalid-feedback">Ingresá un email válido, por ejemplo nombre@dominio.com.</div>
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="tipo">Tipo de consulta *</label>
+              <select class="form-select" id="tipo" required>
+                <option value="" selected disabled>Elegí una opción…</option>
+                <option value="consulta">Consulta general</option>
+                <option value="cotizacion">Cotización de proyecto</option>
+                <option value="asesoria">Asesoría técnica</option>
+              </select>
+              <div class="invalid-feedback">Seleccioná el tipo de consulta.</div>
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="mensaje">Mensaje *</label>
+              <textarea class="form-control" id="mensaje" rows="5" placeholder="Contame sobre tu proyecto…" required minlength="10"></textarea>
+              <div class="invalid-feedback">El mensaje debe tener al menos 10 caracteres.</div>
+            </div>
+            <div class="col-12">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="acepta" required>
+                <label class="form-check-label small text-muted-arc" for="acepta">
+                  Acepto que mis datos se usen para responder esta consulta.
+                </label>
+                <div class="invalid-feedback">Debés aceptar para enviar el formulario.</div>
+              </div>
+            </div>
+            <div class="col-12 d-flex flex-wrap align-items-center gap-3">
+              <button class="btn-arcade btn-arcade--pink" type="submit">✉ Enviar consulta</button>
+              <span class="small text-muted-arc">Los campos con * son obligatorios</span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="arc-footer mt-5 py-4">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+        <span class="ficha">D</span>
+        <span class="brand">DEV<span class="neon-pink">ARCADE</span></span>
+      </a>
+      <p class="small text-muted-arc m-0">© 2026 DevArcade — Portfolio de Luca Ferrari</p>
+      <div class="d-flex gap-3 small">
+        <a class="text-muted-arc text-decoration-none" href="#">GitHub</a>
+        <a class="text-muted-arc text-decoration-none" href="#">LinkedIn</a>
+        <a class="text-muted-arc text-decoration-none" href="#">CV (PDF)</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/vendor/bootstrap.bundle.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

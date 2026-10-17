@@ -1,0 +1,165 @@
+/* ============================================================
+   DevArcade — theme.css
+   Tema Bootstrap 5.3: variables de marca sobrescritas.
+   ============================================================ */
+
+:root {
+  /* --- Paleta DevArcade --- */
+  --arc-bg: #0B0B1A;
+  --arc-surface: #16162E;
+  --arc-surface-hi: #1F1F3A;
+  --arc-edge: #26264D;
+  --arc-pink: #FF2D95;
+  --arc-cyan: #00F5FF;
+  --arc-yellow: #FFE600;
+  --arc-text: #F2F2F7;
+  --arc-muted: #9CA3C4;
+  --arc-success: #39FF88;
+  --arc-danger: #FF4D5E;
+  --arc-warning: #FFB020;
+
+  /* --- Tipografía --- */
+  --font-display: 'Press Start 2P', 'Courier New', monospace;
+  --font-body: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+
+  /* --- Bootstrap: tema oscuro + marca --- */
+  --bs-primary: #FF2D95;
+  --bs-primary-rgb: 255, 45, 149;
+  --bs-body-bg: #0B0B1A;
+  --bs-body-color: #F2F2F7;
+  --bs-body-font-family: var(--font-body);
+  --bs-border-color: #26264D;
+  --bs-link-color: #00F5FF;
+  --bs-link-hover-color: #6AF7FF;
+  --bs-border-radius: 8px;
+  --bs-border-radius-lg: 12px;
+  --bs-focus-ring-color: rgba(0, 245, 255, 0.35);
+  --bs-secondary-color: #9CA3C4;
+  --bs-tertiary-bg: #16162E;
+  --bs-emphasis-color: #F2F2F7;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background:
+    radial-gradient(1100px 520px at 85% -10%, rgba(255, 45, 149, 0.13), transparent 60%),
+    radial-gradient(900px 480px at 5% 110%, rgba(0, 245, 255, 0.10), transparent 60%),
+    var(--arc-bg);
+  background-attachment: fixed;
+  color: var(--arc-text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* --- Utilidades de marca --- */
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: 1px;
+  line-height: 1.5;
+}
+
+.neon-pink {
+  color: var(--arc-pink);
+  text-shadow: 0 0 6px rgba(255, 45, 149, 0.8), 0 0 18px rgba(255, 45, 149, 0.45), 0 0 42px rgba(255, 45, 149, 0.25);
+}
+
+.neon-cyan {
+  color: var(--arc-cyan);
+  text-shadow: 0 0 6px rgba(0, 245, 255, 0.8), 0 0 18px rgba(0, 245, 255, 0.45), 0 0 42px rgba(0, 245, 255, 0.22);
+}
+
+.text-muted-arc { color: var(--arc-muted); }
+
+.display-arc {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 4.2vw, 2.6rem);
+  line-height: 1.45;
+  letter-spacing: 1px;
+}
+
+.h-arc {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3vw, 2.5rem);
+  letter-spacing: -0.02em;
+}
+
+.section-label {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  color: var(--arc-cyan);
+  text-transform: uppercase;
+}
+
+/* --- Superficies --- */
+.surface {
+  background: var(--arc-surface);
+  border: 2px solid var(--arc-edge);
+  border-radius: 12px;
+}
+
+.grid-floor {
+  background-image:
+    linear-gradient(rgba(0, 245, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 245, 255, 0.07) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
+}
+
+/* --- Formularios (estados de validación visibles) --- */
+.form-control, .form-select {
+  background: var(--arc-surface);
+  border: 2px solid var(--arc-edge);
+  color: var(--arc-text);
+}
+.form-control:focus, .form-select:focus {
+  background: var(--arc-surface-hi);
+  border-color: var(--arc-cyan);
+  color: var(--arc-text);
+  box-shadow: 0 0 0 0.2rem rgba(0, 245, 255, 0.18);
+}
+.form-control::placeholder { color: #6C739A; }
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--arc-muted);
+  margin-bottom: 0.35rem;
+}
+.form-control.is-invalid, .form-select.is-invalid {
+  border-color: var(--arc-danger);
+  background-image: none;
+}
+.form-control.is-valid, .form-select.is-valid {
+  border-color: var(--arc-success);
+  background-image: none;
+}
+.invalid-feedback { color: var(--arc-danger); }
+.valid-feedback { color: var(--arc-success); }
+
+/* --- Accesibilidad: foco siempre visible --- */
+a:focus-visible, button:focus-visible {
+  outline: 3px solid var(--arc-cyan);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* --- Movimiento reducido --- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Ajustes de controles en pantallas pequeñas. */
+label.form-label { width:100%; }
+button:disabled { opacity:.5; cursor:wait; }
+@media(max-width:575px){ .cabinet__deck { flex-wrap:wrap; gap:.75rem; } .arc-nav > .container { flex-wrap:wrap; gap:.6rem; } .arc-nav .d-flex { flex-wrap:wrap; } .game-overlay .font-display { font-size:.75rem; } }

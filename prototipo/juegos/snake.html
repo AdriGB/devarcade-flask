@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Snake — DevArcade</title>
+  <link href="/vendor/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="../theme.css" rel="stylesheet">
+  <link href="../arcade.css" rel="stylesheet">
+  <style>
+    #tabla { width: 100%; max-width: 420px; aspect-ratio: 1; background: #05050F; border: 2px solid var(--arc-edge); border-radius: 10px; touch-action: none; }
+    .game-wrap { position: relative; }
+    .game-overlay {
+      position: absolute; inset: 0; display: grid; place-items: center;
+      background: rgba(5, 5, 15, 0.82); border-radius: 10px; text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="arc-nav py-2">
+    <div class="container d-flex justify-content-between align-items-center">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="../arcade.html">
+        <span class="ficha">D</span>
+        <span class="brand">DEV<span class="neon-pink">ARCADE</span></span>
+      </a>
+      <div class="d-flex align-items-center gap-3">
+        <span class="tech-chip py-1" id="hud-usuario">👤 …</span>
+        <a class="btn-arcade btn-arcade--cyan py-2 px-3" href="../arcade.html">← Volver a la sala</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-7 col-lg-6">
+        <div class="cabinet cabinet--on">
+          <div class="cabinet__marquee neon-pink">SNAKE</div>
+          <div class="p-3">
+            <div class="game-wrap">
+              <canvas id="tabla" width="400" height="400"></canvas>
+              <div class="game-overlay" id="inicio">
+                <div>
+                  <p class="font-display neon-cyan mb-3">SNAKE</p>
+                  <p class="small text-muted-arc">Flechas / WASD para mover · Espacio para pausar</p>
+                  <button class="btn-arcade btn-arcade--coin" id="btn-jugar" disabled>▶ Jugar</button>
+                </div>
+              </div>
+              <div class="game-overlay d-none" id="fin">
+                <div>
+                  <p class="font-display neon-pink mb-2">GAME OVER</p>
+                  <p class="font-display" style="color:var(--arc-yellow)">PUNTAJE: <span id="fin-puntaje">0</span></p>
+                  <button class="btn-arcade btn-arcade--coin mt-2" id="btn-reintentar">↻ Jugar de nuevo</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="cabinet__deck">
+            <div class="d-flex gap-4">
+              <div>
+                <div class="small text-muted-arc">Puntaje</div>
+                <div class="font-display neon-cyan" id="hud-puntaje">0</div>
+              </div>
+              <div>
+                <div class="small text-muted-arc">Largo</div>
+                <div class="font-display" style="color:var(--arc-success)" id="hud-largo">3</div>
+              </div>
+              <div>
+                <div class="small text-muted-arc">Velocidad</div>
+                <div class="font-display" style="color:var(--arc-yellow)" id="hud-vel">1</div>
+              </div>
+            </div>
+            <div class="ms-auto d-flex align-items-center gap-2"><button class="btn-arcade btn-arcade--cyan py-2 px-3" id="btn-pausa">⏸ Pausa</button>
+              <span class="coin-slot"></span>
+              <span class="font-display small text-muted-arc">1 CREDIT</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-5 col-lg-4">
+        <p class="section-label mb-2">Demo jugable</p>
+        <h1 class="h-arc mb-3">Snake</h1>
+        <p class="text-muted-arc">
+          El clásico de comer y crecer. La velocidad aumenta cada 5 manzanas:
+          la serpiente acelera, vos también.
+        </p>
+        <div class="surface p-3 mt-3">
+          <h2 class="h6 text-uppercase text-muted-arc mb-2" style="letter-spacing:.12em;">Controles</h2>
+          <ul class="small text-muted-arc mb-0">
+            <li><b class="text-white">↑ ↓ ← →</b> o <b class="text-white">WASD</b> — mover</li>
+            <li><b class="text-white">Espacio</b> — pausar / reanudar</li>
+            <li><b class="text-white">Clic en Jugar</b> — empezar</li>
+          </ul>
+        </div>
+        <div class="surface p-3 mt-3">
+          <h2 class="h6 text-uppercase text-muted-arc mb-2" style="letter-spacing:.12em;">Puntaje</h2>
+          <p class="small text-muted-arc mb-0">
+            +10 por manzana. Al terminar la partida se guarda automáticamente
+            en tu perfil y aparecés en el ranking.
+          </p>
+        </div>
+        <a class="btn-arcade btn-arcade--cyan mt-3" href="../arcade.html#">🏆 Ver ranking</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="juego.js"></script>
+  <script>
+    let autenticado=false; initJuego('snake').then(ok=>{autenticado=ok;document.querySelector('#btn-jugar').disabled=!ok;});
+    let pausado=false;
+
+    const canvas = document.querySelector('#tabla');
+    const ctx = canvas.getContext('2d');
+    const N = 20;
+    const CELDA = canvas.width / N;
+
+    let serpiente, dir, proximaDir, manzana, puntaje, velocidad, corriendo = false, intervalo;
+
+    function celdaLibre() {
+      const libres=[];
+      for(let x=0;x<N;x++)for(let y=0;y<N;y++)if(!serpiente.some(s=>s.x===x&&s.y===y))libres.push({x,y});
+      return libres.length?libres[Math.floor(Math.random()*libres.length)]:null;
+    }
+
+    function iniciar() {
+      if(!autenticado)return; pausado=false;document.querySelector('#btn-pausa').textContent='⏸ Pausa';
+      serpiente = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];
+      dir = { x: 1, y: 0 };
+      proximaDir = { ...dir };
+      puntaje = 0;
+      velocidad = 140;
+      manzana = celdaLibre();
+      corriendo = true;
+      document.querySelector('#inicio').classList.add('d-none');
+      document.querySelector('#fin').classList.add('d-none');
+      clearInterval(intervalo);
+      intervalo = setInterval(tick, velocidad);
+      pintar();
+      actualizarHud();
+    }
+
+    function actualizarHud() {
+      hud('#hud-puntaje', puntaje);
+      hud('#hud-largo', serpiente.length);
+      hud('#hud-vel', 1 + Math.round((140 - velocidad) / 15));
+    }
+
+    function tick() {
+      if(pausado||!corriendo)return;
+      dir = proximaDir;
+      const cabeza = { x: serpiente[0].x + dir.x, y: serpiente[0].y + dir.y };
+
+      // Colisión con paredes o con el propio cuerpo
+      if (
+        cabeza.x < 0 || cabeza.x >= N || cabeza.y < 0 || cabeza.y >= N ||
+        (cabeza.x===manzana.x&&cabeza.y===manzana.y?serpiente:serpiente.slice(0,-1)).some((s) => s.x === cabeza.x && s.y === cabeza.y)
+      ) {
+        return terminar();
+      }
+
+      serpiente.unshift(cabeza);
+
+      if (cabeza.x === manzana.x && cabeza.y === manzana.y) {
+        puntaje += 10;
+        manzana = celdaLibre();
+        if(!manzana){pintar();actualizarHud();return terminar();}
+        // Acelera cada 5 manzanas (mínimo 60 ms)
+        if (puntaje % 50 === 0 && velocidad > 60) {
+          velocidad -= 15;
+          clearInterval(intervalo);
+          intervalo = setInterval(tick, velocidad);
+        }
+      } else {
+        serpiente.pop();
+      }
+
+      pintar();
+      actualizarHud();
+    }
+
+    function terminar() {
+      corriendo = false;
+      clearInterval(intervalo);
+      hud('#fin-puntaje', puntaje);
+      document.querySelector('#fin').classList.remove('d-none');
+      guardarPuntaje(puntaje);
+    }
+
+    function pintar() {
+      ctx.fillStyle = '#05050F';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Rejilla sutil
+      ctx.strokeStyle = 'rgba(0, 245, 255, 0.06)';
+      for (let i = 0; i < N; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * CELDA, 0); ctx.lineTo(i * CELDA, canvas.height);
+        ctx.moveTo(0, i * CELDA); ctx.lineTo(canvas.width, i * CELDA);
+        ctx.stroke();
+      }
+
+      // Manzana
+      ctx.fillStyle = '#FF2D95';
+      ctx.shadowColor = 'rgba(255, 45, 149, 0.8)';
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+      ctx.arc((manzana?.x ?? -10) * CELDA + CELDA / 2, (manzana?.y ?? -10) * CELDA + CELDA / 2, CELDA / 2.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Serpiente
+      serpiente.forEach((s, i) => {
+        ctx.fillStyle = i === 0 ? '#FFE600' : '#39FF88';
+        ctx.fillRect(s.x * CELDA + 2, s.y * CELDA + 2, CELDA - 4, CELDA - 4);
+      });
+    }
+
+    // ---------- Controles ----------
+    const TECLAS = {
+      ArrowUp: { x: 0, y: -1 }, ArrowDown: { x: 0, y: 1 },
+      ArrowLeft: { x: -1, y: 0 }, ArrowRight: { x: 1, y: 0 },
+      w: { x: 0, y: -1 }, s: { x: 0, y: 1 }, a: { x: -1, y: 0 }, d: { x: 1, y: 0 }
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if(!autenticado || !corriendo)return;
+      const t = TECLAS[e.key] || TECLAS[e.key.toLowerCase()];
+      if (t) {
+        e.preventDefault();
+        // Evita el giro de 180° (colisión inmediata con el propio cuerpo)
+        if (t.x !== -dir.x || t.y !== -dir.y) proximaDir = t;
+      }
+      if (e.key === ' ') {
+        e.preventDefault();
+        if(corriendo)alternarPausa();else iniciar();
+      }
+    });
+
+    // Swipe en mobile
+    let toque = null;
+    canvas.addEventListener('touchstart', (e) => { toque = e.touches[0]; }, { passive: true });
+    canvas.addEventListener('touchend', (e) => {
+      if(!corriendo || pausado)return;
+      if (!toque) return;
+      const fin = e.changedTouches[0];
+      const dx = fin.clientX - toque.clientX;
+      const dy = fin.clientY - toque.clientY;
+      toque=null; if(Math.abs(dx)<12&&Math.abs(dy)<12)return;
+      const t = Math.abs(dx) > Math.abs(dy)
+        ? { x: Math.sign(dx), y: 0 }
+        : { x: 0, y: Math.sign(dy) };
+      if (t.x !== -dir.x || t.y !== -dir.y) proximaDir = t;
+    });
+
+    function alternarPausa(){
+      if(!corriendo)return;
+      pausado=!pausado;clearInterval(intervalo);
+      document.querySelector('#btn-pausa').textContent=pausado?'▶ Continuar':'⏸ Pausa';
+      if(!pausado)intervalo=setInterval(tick,velocidad);
+    }
+    document.querySelector('#btn-pausa').addEventListener('click',alternarPausa);
+    document.addEventListener('visibilitychange',()=>{if(document.hidden&&corriendo&&!pausado)alternarPausa();});
+    window.addEventListener('pagehide',()=>clearInterval(intervalo));
+    document.querySelector('#btn-jugar').addEventListener('click', iniciar);
+    document.querySelector('#btn-reintentar').addEventListener('click', iniciar);
+  </script>
+</body>
+</html>

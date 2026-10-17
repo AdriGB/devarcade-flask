@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Ficha del proyecto — DevArcade</title>
+<link href="/vendor/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="theme.css" rel="stylesheet"><link href="arcade.css" rel="stylesheet"></head><body>
+<nav class="navbar navbar-expand-lg sticky-top arc-nav py-2"><div class="container">
+<a class="navbar-brand d-flex align-items-center gap-2" href="index.html"><span class="ficha">D</span><span class="brand">DEV<span class="neon-pink">ARCADE</span></span></a>
+<button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav" aria-label="Abrir navegación"><span class="navbar-toggler-icon"></span></button>
+<div class="collapse navbar-collapse" id="nav"><ul class="navbar-nav ms-auto gap-3 align-items-lg-center">
+<li class="nav-item"><a class="nav-link" href="index.html">Portfolio</a></li><li class="nav-item"><a class="nav-link" href="arcade.html">Sala arcade</a></li>
+<li class="nav-item"><a class="nav-link" href="index.html#contacto">Contacto</a></li><li class="nav-item"><a class="nav-link" href="login.html">Iniciar sesión</a></li>
+</ul></div></div></nav><main class="container py-5">
+<section id="vista-visitante" class="surface p-4"><p class="section-label" id="vis-marquee">DEMO</p><h1 class="h-arc" id="vis-titulo">Ficha de proyecto</h1>
+<p class="text-muted-arc" id="vis-desc"></p><p>Registrate o iniciá sesión para ver el detalle y jugar.</p><a class="btn-arcade btn-arcade--coin" id="detalle-login" href="login.html">Entrar</a></section>
+<section id="vista-registrado" class="d-none"><p class="section-label" id="reg-marquee"></p><h1 class="h-arc neon-cyan" id="reg-titulo">Cargando…</h1>
+<p class="text-muted-arc mt-4" id="reg-desc"></p><div id="reg-tecnologias" class="d-flex flex-wrap gap-2 mb-4"></div>
+<a class="btn-arcade btn-arcade--coin d-none" id="reg-btn-jugar">Jugar</a><a href="arcade.html" class="btn-arcade btn-arcade--cyan ms-2">Volver</a>
+<div class="surface p-4 mt-4"><h2 class="h5">Mis últimas partidas</h2><div class="table-responsive"><table class="table table-arc"><thead><tr><th>Fecha</th><th class="text-end">Puntaje</th></tr></thead><tbody id="reg-tabla-partidas"></tbody></table></div></div></section></main>
+<footer class="container py-4 small text-muted-arc border-top">DevArcade · Portfolio fullstack · Python + Flask + SQLite</footer>
+<script src="/vendor/bootstrap.bundle.min.js"></script>
+
+<script src="app.js"></script></body></html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>La sala — DevArcade</title>
+<link href="/vendor/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="theme.css" rel="stylesheet"><link href="arcade.css" rel="stylesheet"></head><body>
+<nav class="navbar navbar-expand-lg sticky-top arc-nav py-2"><div class="container">
+<a class="navbar-brand d-flex align-items-center gap-2" href="index.html"><span class="ficha">D</span><span class="brand">DEV<span class="neon-pink">ARCADE</span></span></a>
+<button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav" aria-label="Abrir navegación"><span class="navbar-toggler-icon"></span></button>
+<div class="collapse navbar-collapse" id="nav"><ul class="navbar-nav ms-auto gap-3 align-items-lg-center">
+<li class="nav-item"><a class="nav-link" href="index.html">Portfolio</a></li><li class="nav-item"><a class="nav-link" href="arcade.html">Sala arcade</a></li>
+<li class="nav-item"><a class="nav-link" href="index.html#contacto">Contacto</a></li><li class="nav-item"><a class="nav-link" href="login.html">Iniciar sesión</a></li>
+</ul></div></div></nav><main class="container py-5">
+<header class="mb-5"><p class="section-label">Demos interactivas</p><h1 class="display-arc neon-cyan">LA SALA ARCADE</h1>
+<p class="text-muted-arc mt-3">Cada máquina es una demo. Creá una cuenta para jugar y guardar tus partidas.</p></header>
+<div class="row g-4" id="grilla-maquinas" aria-live="polite"><p>Cargando máquinas…</p></div>
+<section class="surface p-4 mt-5"><h2 class="h-arc h4">Ranking general</h2><p class="small text-muted-arc">Mejor puntaje de cada jugador. Los puntos de cada juego tienen escalas distintas.</p>
+<div class="table-responsive"><table class="table table-arc"><thead><tr><th>#</th><th>Jugador</th><th>Juego</th><th class="text-end">Puntaje</th></tr></thead><tbody id="tabla-ranking-sala"></tbody></table></div></section></main>
+<footer class="container py-4 small text-muted-arc border-top">DevArcade · Portfolio fullstack · Python + Flask + SQLite</footer>
+<script src="/vendor/bootstrap.bundle.min.js"></script>
+
+<script src="app.js"></script></body></html>

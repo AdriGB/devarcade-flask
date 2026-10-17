@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Acceso — DevArcade</title>
+<link href="/vendor/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="theme.css" rel="stylesheet"><link href="arcade.css" rel="stylesheet"></head><body>
+<nav class="navbar navbar-expand-lg sticky-top arc-nav py-2"><div class="container">
+<a class="navbar-brand d-flex align-items-center gap-2" href="index.html"><span class="ficha">D</span><span class="brand">DEV<span class="neon-pink">ARCADE</span></span></a>
+<button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav" aria-label="Abrir navegación"><span class="navbar-toggler-icon"></span></button>
+<div class="collapse navbar-collapse" id="nav"><ul class="navbar-nav ms-auto gap-3 align-items-lg-center">
+<li class="nav-item"><a class="nav-link" href="index.html">Portfolio</a></li><li class="nav-item"><a class="nav-link" href="arcade.html">Sala arcade</a></li>
+<li class="nav-item"><a class="nav-link" href="index.html#contacto">Contacto</a></li><li class="nav-item"><a class="nav-link" href="login.html">Iniciar sesión</a></li>
+</ul></div></div></nav><main class="container py-5"><div class="row g-5 align-items-start"><div class="col-lg-5"><p class="section-label">Acceso de jugadores</p><h1 class="display-arc neon-pink">INSERT COIN</h1><p class="text-muted-arc mt-4">Entrá a la sala, jugá y guardá tus mejores puntajes.</p><p class="small">Tu cuenta se guarda en la base local de este proyecto.</p></div><div class="col-lg-7 surface p-4">
+<ul class="nav nav-pills gap-2 mb-4" role="tablist"><li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-login" type="button" role="tab">Iniciar sesión</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-registro" type="button" role="tab">Crear cuenta</button></li></ul>
+<div class="tab-content"><div class="tab-pane fade show active" id="tab-login"><form>
+<label class="form-label d-block">Email<input class="form-control" id="login-email" type="email" required autocomplete="username"></label>
+<label class="form-label d-block">Contraseña<input class="form-control" id="login-pass" type="password" required autocomplete="current-password"></label>
+<button type="submit" class="btn-arcade btn-arcade--coin mt-3">Entrar a la sala</button></form></div>
+<div class="tab-pane fade" id="tab-registro"><form>
+<label class="form-label d-block">Nombre de jugador<input class="form-control" id="reg-user" required minlength="3" maxlength="20" pattern="[a-zA-Z0-9_.-]{3,20}" autocomplete="username"></label>
+<label class="form-label d-block">Email<input class="form-control" id="reg-email" type="email" required autocomplete="email"></label>
+<label class="form-label d-block">Contraseña<input class="form-control" id="reg-pass" type="password" required minlength="8" maxlength="72" autocomplete="new-password"></label>
+<label class="form-label d-block">Repetir contraseña<input class="form-control" id="reg-pass2" type="password" required minlength="8" autocomplete="new-password"><span class="invalid-feedback">Las contraseñas deben coincidir.</span></label>
+<button type="submit" class="btn-arcade btn-arcade--coin mt-3">Crear cuenta y jugar</button></form></div></div></div></div></main>
+<footer class="container py-4 small text-muted-arc border-top">DevArcade · Portfolio fullstack · Python + Flask + SQLite</footer>
+<script src="/vendor/bootstrap.bundle.min.js"></script>
+
+<script src="app.js"></script></body></html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ta-Te-Ti — DevArcade</title>
+  <link href="/vendor/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="../theme.css" rel="stylesheet">
+  <link href="../arcade.css" rel="stylesheet">
+  <style>
+    .ttt {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      max-width: 380px;
+    }
+    .ttt .casilla {
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      background: var(--arc-surface-hi);
+      border: 2px solid var(--arc-edge);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1), border-color 150ms ease, box-shadow 150ms ease;
+    }
+    .ttt .casilla:hover:empty { transform: translateY(-3px); border-color: var(--arc-cyan); }
+    .ttt .casilla.x { color: var(--arc-pink); text-shadow: 0 0 12px rgba(255, 45, 149, 0.6); cursor: default; }
+    .ttt .casilla.o { color: var(--arc-cyan); text-shadow: 0 0 12px rgba(0, 245, 255, 0.6); cursor: default; }
+    .ttt .casilla.ganadora {
+      border-color: var(--arc-yellow);
+      box-shadow: 0 0 22px rgba(255, 230, 0, 0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="arc-nav py-2">
+    <div class="container d-flex justify-content-between align-items-center">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="../arcade.html">
+        <span class="ficha">D</span>
+        <span class="brand">DEV<span class="neon-pink">ARCADE</span></span>
+      </a>
+      <div class="d-flex align-items-center gap-3">
+        <span class="tech-chip py-1" id="hud-usuario">👤 …</span>
+        <a class="btn-arcade btn-arcade--cyan py-2 px-3" href="../arcade.html">← Volver a la sala</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-7 col-lg-6">
+        <div class="cabinet cabinet--on">
+          <div class="cabinet__marquee neon-pink">TA-TE-TI</div>
+          <div class="p-3 d-flex justify-content-center">
+            <div class="ttt" id="tablero"></div>
+          </div>
+          <div class="cabinet__deck">
+            <div class="d-flex gap-4">
+              <div>
+                <div class="small text-muted-arc">Puntaje</div>
+                <div class="font-display neon-cyan" id="hud-puntaje">0</div>
+              </div>
+              <div>
+                <div class="small text-muted-arc">G / P / E</div>
+                <div class="font-display" style="color:var(--arc-success)" id="hud-marcador">0/0/0</div>
+              </div>
+            </div>
+            <button class="btn-arcade btn-arcade--coin py-2 px-3 ms-auto" id="btn-guardar">🪙 Guardar puntaje</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-5 col-lg-4">
+        <p class="section-label mb-2">Demo jugable</p>
+        <h1 class="h-arc mb-3">Ta-Te-Ti</h1>
+        <p class="text-muted-arc">
+          Tres en raya contra la computadora. Jugás con <b class="neon-pink">X</b>,
+          la máquina con <b class="neon-cyan">O</b> — y en modo imposible usa
+          algoritmo <b>minimax</b>: no se puede ganar, solo empatar.
+        </p>
+
+        <div class="surface p-3 mt-3">
+          <h2 class="h6 text-uppercase text-muted-arc mb-2" style="letter-spacing:.12em;">Dificultad</h2>
+          <div class="d-flex gap-2">
+            <button class="btn-arcade btn-arcade--cyan py-2 px-3" id="btn-facil">Fácil</button>
+            <button class="btn-arcade btn-arcade--pink py-2 px-3" id="btn-imposible">Imposible</button>
+          </div>
+          <p class="small text-muted-arc mt-2 mb-0" id="nivel-actual">
+            Nivel actual: <b class="text-white">Imposible</b>
+          </p>
+        </div>
+
+        <div class="surface p-3 mt-3">
+          <h2 class="h6 text-uppercase text-muted-arc mb-2" style="letter-spacing:.12em;">Puntaje</h2>
+          <ul class="small text-muted-arc mb-0">
+            <li>Ganar en modo fácil: <b class="text-white">+250</b></li>
+            <li>Ganar en modo imposible: <b class="text-white">+500</b> (¡prácticamente imposible!)</li>
+            <li>Empatar: <b class="text-white">+100</b></li>
+          </ul>
+        </div>
+
+        <div id="resultado" class="gate-panel mt-3 d-none">
+          <p class="font-display mb-0" id="resultado-texto"></p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="juego.js"></script>
+  <script>
+    let autenticado=false,timerIA=null,timerRonda=null; initJuego('ta-te-ti').then(ok=>{autenticado=ok;if(ok)nuevaRonda();});
+
+    const HUMANO = 'X', MAQUINA = 'O';
+    let tablero = Array(9).fill(''), turno = HUMANO, activo = true;
+    let puntaje = 0, ganadas = 0, perdidas = 0, empates = 0;
+    let nivel = 'imposible';
+    const COMBINACIONES = [
+      [0,1,2],[3,4,5],[6,7,8],  // filas
+      [0,3,6],[1,4,7],[2,5,8],  // columnas
+      [0,4,8],[2,4,6]           // diagonales
+    ];
+
+    function pintarTablero() {
+      const cont = document.querySelector('#tablero');
+      cont.innerHTML = '';
+      tablero.forEach((valor, i) => {
+        const c = document.createElement('button');c.type='button';c.setAttribute('aria-label',`Casilla ${i+1}: ${valor||'vacía'}`);
+        c.className = 'casilla' + (valor === HUMANO ? ' x' : valor === MAQUINA ? ' o' : '');
+        c.textContent = valor;
+        c.addEventListener('click', () => jugarHumano(i));
+        cont.appendChild(c);
+      });
+    }
+
+    function ganador(t) {
+      for (const [a, b, c] of COMBINACIONES) {
+        if (t[a] && t[a] === t[b] && t[a] === t[c]) return { jugador: t[a], linea: [a, b, c] };
+      }
+      return t.includes('') ? null : { jugador: 'empate', linea: [] };
+    }
+
+    function jugarHumano(i) {
+      if (!autenticado || !activo || turno !== HUMANO || tablero[i]) return;
+      tablero[i] = HUMANO;
+      turno = MAQUINA;
+      const r = resolver();
+      if (!r) timerIA=setTimeout(jugarMaquina, 350);
+    }
+
+    function jugarMaquina() {
+      if (!activo) return;
+      const i = nivel === 'imposible'
+        ? mejorMovimiento()
+        : Math.random() < 0.6
+          ? mejorMovimiento()
+          : movimientosLibres()[0];
+      tablero[i] = MAQUINA;
+      turno = HUMANO;
+      resolver();
+    }
+
+    function movimientosLibres() {
+      return tablero.map((v, i) => (v ? null : i)).filter((v) => v !== null);
+    }
+
+    // ---------- IA: minimax ----------
+    function mejorMovimiento() {
+      let mejor = -Infinity, mov = movimientosLibres()[0];
+      for (const i of movimientosLibres()) {
+        tablero[i] = MAQUINA;
+        const p = minimax(tablero, false);
+        tablero[i] = '';
+        if (p > mejor) { mejor = p; mov = i; }
+      }
+      return mov;
+    }
+
+    function minimax(t, maximiza) {
+      const r = ganador(t);
+      if (r) {
+        if (r.jugador === MAQUINA) return 1;
+        if (r.jugador === HUMANO) return -1;
+        return 0;
+      }
+      if (maximiza) {
+        let mejor = -Infinity;
+        for (const i of movimientosLibres()) {
+          t[i] = MAQUINA;
+          mejor = Math.max(mejor, minimax(t, false));
+          t[i] = '';
+        }
+        return mejor;
+      }
+      let mejor = Infinity;
+      for (const i of movimientosLibres()) {
+        t[i] = HUMANO;
+        mejor = Math.min(mejor, minimax(t, true));
+        t[i] = '';
+      }
+      return mejor;
+    }
+
+    // ---------- Resultado ----------
+    function resolver() {
+      const r = ganador(tablero);
+      if (!r) { pintarTablero(); return false; }
+
+      activo = false;
+      pintarTablero();
+      r.linea.forEach((i) => {
+        const casillas = document.querySelectorAll('.casilla');
+        if (casillas[i]) casillas[i].classList.add('ganadora');
+      });
+
+      const panel = document.querySelector('#resultado');
+      const texto = document.querySelector('#resultado-texto');
+      panel.classList.remove('d-none');
+
+      if (r.jugador === HUMANO) {
+        const puntos = nivel === 'imposible' ? 500 : 250;
+        puntaje += puntos; ganadas++;
+        texto.textContent = `🎉 ¡GANASTE! +${puntos} puntos`;
+        texto.style.color = 'var(--arc-success)';
+      } else if (r.jugador === MAQUINA) {
+        perdidas++;
+        texto.textContent = '💀 La máquina gana esta ronda';
+        texto.style.color = 'var(--arc-danger)';
+      } else {
+        puntaje += 100; empates++;
+        texto.textContent = '🤝 Empate — +100 puntos';
+        texto.style.color = 'var(--arc-yellow)';
+      }
+
+      hud('#hud-puntaje', puntaje);
+      hud('#hud-marcador', `${ganadas}/${perdidas}/${empates}`);
+      timerRonda=setTimeout(nuevaRonda, 1400);
+      return true;
+    }
+
+    function nuevaRonda() {
+      clearTimeout(timerIA);clearTimeout(timerRonda);if(!autenticado)return;
+      tablero = Array(9).fill('');
+      activo = true;
+      turno = HUMANO;
+      document.querySelector('#resultado').classList.add('d-none');
+      pintarTablero();
+    }
+
+    // ---------- Controles ----------
+    function setNivel(n) {
+      nivel = n;
+      document.querySelector('#nivel-actual').innerHTML =
+        `Nivel actual: <b class="text-white">${n === 'imposible' ? 'Imposible' : 'Fácil'}</b>`;
+      nuevaRonda();
+    }
+    document.querySelector('#btn-facil').addEventListener('click', () => setNivel('facil'));
+    document.querySelector('#btn-imposible').addEventListener('click', () => setNivel('imposible'));
+    document.querySelector('#btn-guardar').addEventListener('click', async () => {
+      if (puntaje > 0) {
+        const guardado=puntaje;puntaje=0;
+        await guardarPuntaje(guardado);
+
+        hud('#hud-puntaje', puntaje);
+      } else {
+        mostrarAviso('Todavía no tenés puntaje para guardar', true);
+      }
+    });
+
+    window.addEventListener('pagehide',()=>{clearTimeout(timerIA);clearTimeout(timerRonda);});
+    pintarTablero();
+  </script>
+</body>
+</html>

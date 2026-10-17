@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Memory — DevArcade</title>
+  <link href="/vendor/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="../theme.css" rel="stylesheet">
+  <link href="../arcade.css" rel="stylesheet">
+  <style>
+    .tablero {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      max-width: 420px;
+    }
+    .carta {
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      font-size: 1.8rem;
+      background: var(--arc-surface-hi);
+      border: 2px solid var(--arc-edge);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1), border-color 200ms ease, box-shadow 200ms ease;
+      user-select: none;
+    }
+    .carta:hover { transform: translateY(-3px); border-color: var(--arc-cyan); }
+    .carta .simbolo { display: none; }
+    .carta.abierta, .carta.encontrada {
+      background: rgba(255, 230, 0, 0.12);
+      border-color: var(--arc-yellow);
+      box-shadow: 0 0 18px rgba(255, 230, 0, 0.35);
+      cursor: default;
+    }
+    .carta.abierta .simbolo, .carta.encontrada .simbolo { display: block; }
+    .carta.encontrada { opacity: 0.55; }
+  </style>
+</head>
+<body>
+
+  <nav class="arc-nav py-2">
+    <div class="container d-flex justify-content-between align-items-center">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="../arcade.html">
+        <span class="ficha">D</span>
+        <span class="brand">DEV<span class="neon-pink">ARCADE</span></span>
+      </a>
+      <div class="d-flex align-items-center gap-3">
+        <span class="tech-chip py-1" id="hud-usuario">👤 …</span>
+        <a class="btn-arcade btn-arcade--cyan py-2 px-3" href="../arcade.html">← Volver a la sala</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-7 col-lg-6">
+        <div class="cabinet cabinet--on">
+          <div class="cabinet__marquee neon-pink">MEMORY</div>
+          <div class="p-3 d-flex justify-content-center">
+            <div class="tablero" id="tablero"></div>
+          </div>
+          <div class="cabinet__deck">
+            <div class="d-flex gap-4">
+              <div>
+                <div class="small text-muted-arc">Movimientos</div>
+                <div class="font-display neon-cyan" id="hud-mov">0</div>
+              </div>
+              <div>
+                <div class="small text-muted-arc">Tiempo</div>
+                <div class="font-display" style="color:var(--arc-yellow)" id="hud-tiempo">0s</div>
+              </div>
+              <div>
+                <div class="small text-muted-arc">Parejas</div>
+                <div class="font-display" style="color:var(--arc-success)" id="hud-parejas">0/8</div>
+              </div>
+            </div>
+            <button class="btn-arcade btn-arcade--cyan py-2 px-3 ms-auto" id="btn-reiniciar">↻ Reiniciar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-5 col-lg-4">
+        <p class="section-label mb-2">Demo jugable</p>
+        <h1 class="h-arc mb-3">Memory</h1>
+        <p class="text-muted-arc">
+          Encontrá las 8 parejas en la menor cantidad de movimientos y tiempo.
+          Menos movimientos = más puntos.
+        </p>
+        <div class="surface p-3 mt-3">
+          <h2 class="h6 text-uppercase text-muted-arc mb-2" style="letter-spacing:.12em;">Puntaje</h2>
+          <p class="small text-muted-arc mb-0">
+            Arrancás con 1200 puntos: −40 por movimiento de más y −5 por segundo.
+            Al completar el tablero se guarda automáticamente en tu perfil.
+          </p>
+        </div>
+        <div id="fin-panel" class="gate-panel mt-3 d-none">
+          <p class="font-display mb-2">🎉 ¡COMPLETADO!</p>
+          <p class="mb-1">Puntaje: <b class="font-display" style="color:var(--arc-yellow)" id="fin-puntaje">0</b></p>
+          <p class="small text-muted-arc mb-2" id="fin-detalle"></p>
+          <a class="btn-arcade btn-arcade--coin py-2 px-3" href="../arcade.html">🏆 Ver ranking</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="juego.js"></script>
+  <script>
+    let autenticado=false,timeoutVolteo=null; initJuego('memory').then(ok=>{autenticado=ok;if(ok)iniciar();});
+
+    const SIMBOLOS = ['👾', '🎮', '🕹️', '⭐', '🍄', '👻', '💎', '🔥'];
+    let abiertas = [], encontradas = 0, movimientos = 0, segundos = 0, temporizador = null, bloqueado = false;
+
+    function mezclar(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function iniciar() {
+      if(!autenticado)return; clearTimeout(timeoutVolteo);
+      clearInterval(temporizador);
+      abiertas = []; encontradas = 0; movimientos = 0; segundos = 0; bloqueado = false;
+      document.querySelector('#fin-panel').classList.add('d-none');
+      actualizarHud();
+
+      const mazo = mezclar([...SIMBOLOS, ...SIMBOLOS]);
+      const tablero = document.querySelector('#tablero');
+      tablero.innerHTML = '';
+      mazo.forEach((simbolo) => {
+        const carta = document.createElement('button');
+        carta.type='button'; carta.setAttribute('aria-label','Carta oculta');
+        carta.className = 'carta';
+        carta.innerHTML = `<span class="simbolo">${simbolo}</span>`;
+        carta.addEventListener('click', () => voltear(carta, simbolo));
+        tablero.appendChild(carta);
+      });
+
+      temporizador = setInterval(() => {
+        segundos++;
+        hud('#hud-tiempo', `${segundos}s`);
+      }, 1000);
+    }
+
+    function voltear(carta, simbolo) {
+      if (bloqueado || carta.classList.contains('abierta') || carta.classList.contains('encontrada')) return;
+
+      carta.classList.add('abierta'); carta.setAttribute('aria-label',simbolo);
+      abiertas.push({ carta, simbolo });
+
+      if (abiertas.length === 2) {
+        movimientos++;
+        actualizarHud();
+        bloqueado = true;
+
+        const [a, b] = abiertas;
+        if (a.simbolo === b.simbolo) {
+          a.carta.classList.replace('abierta', 'encontrada');
+          b.carta.classList.replace('abierta', 'encontrada');
+          abiertas = [];
+          encontradas++;
+          actualizarHud();
+          bloqueado = false;
+          if (encontradas === SIMBOLOS.length) ganar();
+        } else {
+          timeoutVolteo=setTimeout(() => {
+            a.carta.classList.remove('abierta');a.carta.setAttribute('aria-label','Carta oculta');
+            b.carta.classList.remove('abierta');b.carta.setAttribute('aria-label','Carta oculta');
+            abiertas = [];
+            bloqueado = false;
+          }, 750);
+        }
+      }
+    }
+
+    function actualizarHud() {
+      hud('#hud-mov', movimientos);
+      hud('#hud-parejas', `${encontradas}/${SIMBOLOS.length}`);
+      hud('#hud-tiempo', `${segundos}s`);
+    }
+
+    function ganar() {
+      clearInterval(temporizador);
+      const puntaje = Math.max(50, 1200 - Math.max(0, movimientos - 8) * 40 - segundos * 5);
+      hud('#fin-puntaje', puntaje);
+      document.querySelector('#fin-detalle').textContent =
+        `${movimientos} movimientos · ${segundos} segundos`;
+      document.querySelector('#fin-panel').classList.remove('d-none');
+      guardarPuntaje(puntaje);
+    }
+
+    document.querySelector('#btn-reiniciar').addEventListener('click', iniciar);
+    window.addEventListener('pagehide',()=>{clearInterval(temporizador);clearTimeout(timeoutVolteo);});
+  </script>
+</body>
+</html>
